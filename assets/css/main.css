@@ -1,1 +1,32 @@
 @import 'tailwindcss';
+
+:root {
+    --bg-light: #ffffff;
+    --text-light: rgba(0, 0, 0, 0.8);
+    --bg-dark: #091a28;
+    --text-dark: #ebf4f1;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+/* Add transition classes for content */
+.dark .dark\:bg-slate-900 {
+    background-color: #0f172a;
+}
+
+.dark .dark\:text-gray-300 {
+    color: #d1d5db;
+}
+
+.dark .dark\:bg-slate-900\/80 {
+    background-color: rgba(15, 23, 42, 0.8);
+}

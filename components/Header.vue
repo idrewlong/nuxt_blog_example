@@ -18,23 +18,51 @@
                         <span class="text-xl font-bold text-white">MyBlog</span>
                     </NuxtLink>
 
-                    <Transition name="fade">
+                    <div class="flex items-center gap-4">
+                        <!-- Color mode switcher -->
                         <button
-                            v-show="!showMenu"
-                            type="button"
-                            class="text-white/90 hover:text-white focus:outline-none rounded md:hidden transition-opacity duration-300"
-                            :aria-expanded="showMenu"
-                            aria-controls="main-navigation"
-                            @click.stop="toggleNavbar"
+                            @click="toggleColorMode"
+                            class="text-white hover:text-white/80 focus:outline-none rounded p-2"
+                            :aria-label="'Switch to ' + nextColorMode + ' mode'"
                         >
-                            <span class="sr-only">Open menu</span>
                             <Icon
-                                name="ph:list-bold"
-                                class="w-8 h-8 transition-transform duration-300"
+                                v-if="colorMode.value === 'dark'"
+                                name="ph:sun-bold"
+                                class="w-6 h-6"
+                                aria-hidden="true"
+                            />
+                            <Icon
+                                v-else
+                                name="ph:moon-bold"
+                                class="w-6 h-6"
                                 aria-hidden="true"
                             />
                         </button>
-                    </Transition>
+
+                        <!-- Menu button -->
+                        <button
+                            id="menu-button"
+                            type="button"
+                            class="text-white hover:text-white/80 focus:outline-none rounded md:hidden"
+                            :aria-expanded="showMenu"
+                            aria-controls="main-navigation"
+                            @click="toggleNavbar"
+                        >
+                            <span class="sr-only">Toggle menu</span>
+                            <Icon
+                                v-if="!showMenu"
+                                name="ph:list-bold"
+                                class="w-8 h-8"
+                                aria-hidden="true"
+                            />
+                            <Icon
+                                v-else
+                                name="ph:x-bold"
+                                class="w-8 h-8"
+                                aria-hidden="true"
+                            />
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Desktop header -->
@@ -51,20 +79,46 @@
                         >
                     </NuxtLink>
 
-                    <div class="flex items-center gap-8 uppercase">
-                        <NuxtLink
-                            v-for="link in navigationLinks"
-                            :key="link.to"
-                            :to="link.to"
-                            class="relative text-white/80 hover:text-white transition-colors duration-300 group py-2"
-                            :class="{ 'text-white': $route.path === link.to }"
+                    <div class="flex items-center gap-8">
+                        <div class="flex items-center gap-8 uppercase">
+                            <NuxtLink
+                                v-for="link in navigationLinks"
+                                :key="link.to"
+                                :to="link.to"
+                                class="relative text-white/80 hover:text-white transition-colors duration-300 group py-2"
+                                :class="{
+                                    'text-white': $route.path === link.to,
+                                }"
+                            >
+                                {{ link.label }}
+                                <span
+                                    class="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"
+                                    :class="{
+                                        'w-full': $route.path === link.to,
+                                    }"
+                                ></span>
+                            </NuxtLink>
+                        </div>
+
+                        <!-- Color mode switcher -->
+                        <button
+                            @click="toggleColorMode"
+                            class="text-white hover:text-white/80 focus:outline-none rounded p-2"
+                            :aria-label="'Switch to ' + nextColorMode + ' mode'"
                         >
-                            {{ link.label }}
-                            <span
-                                class="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"
-                                :class="{ 'w-full': $route.path === link.to }"
-                            ></span>
-                        </NuxtLink>
+                            <Icon
+                                v-if="colorMode.value === 'dark'"
+                                name="ph:sun-bold"
+                                class="w-6 h-6"
+                                aria-hidden="true"
+                            />
+                            <Icon
+                                v-else
+                                name="ph:moon-bold"
+                                class="w-6 h-6"
+                                aria-hidden="true"
+                            />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -108,15 +162,12 @@
                         />
                     </button>
                 </div>
-                <nav
-                    class="flex flex-col space-y-4"
-                    aria-label="Mobile navigation"
-                >
+                <nav class="flex flex-col" aria-label="Mobile navigation">
                     <NuxtLink
                         v-for="link in navigationLinks"
                         :key="link.to"
                         :to="link.to"
-                        class="text-white/80 hover:text-white transition-colors duration-300 py-2 text-lg"
+                        class="text-white/80 hover:text-white transition-colors duration-300 py-3 text-lg"
                         @click="closeNavbar"
                     >
                         {{ link.label }}
@@ -141,44 +192,78 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 
 const showMenu = ref(false)
+const colorMode = useColorMode()
+
+const nextColorMode = computed(() =>
+    colorMode.value === 'dark' ? 'light' : 'dark'
+)
+
+const toggleColorMode = () => {
+    colorMode.preference = nextColorMode.value
+}
+
+// Watch for color mode changes
+// watch(
+//     () => colorMode.value,
+//     (newValue) => {
+//         console.log('Color mode changed to:', newValue)
+//         console.log('Color mode preference:', colorMode.preference)
+//     },
+//     { immediate: true }
+// )
 
 const navigationLinks = [
     { to: '/about', label: 'About' },
     { to: '/blog', label: 'Blog' },
+    { to: '/projects', label: 'Projects' },
     // { to: '/contact', label: 'Contact' },
 ]
 
-const toggleNavbar = () => (showMenu.value = !showMenu.value)
-const closeNavbar = () => (showMenu.value = false)
+const toggleNavbar = (event) => {
+    event.stopPropagation()
+    showMenu.value = !showMenu.value
+}
 
-// Close menu when clicking outside
-onMounted(() => {
-    document.addEventListener('click', (event) => {
-        const nav = document.querySelector('nav')
-        if (nav && !nav.contains(event.target) && showMenu.value) {
-            closeNavbar()
-        }
-    })
-})
+const closeNavbar = () => {
+    showMenu.value = false
+}
+
+// Handle clicks outside the menu
+const handleOutsideClick = (event) => {
+    const nav = document.querySelector('#main-navigation')
+    const menuButton = document.querySelector('#menu-button')
+    if (
+        showMenu.value &&
+        nav &&
+        !nav.contains(event.target) &&
+        !menuButton?.contains(event.target)
+    ) {
+        closeNavbar()
+    }
+}
 
 // Close menu on escape key
+const handleEscKey = (event) => {
+    if (event.key === 'Escape' && showMenu.value) {
+        closeNavbar()
+    }
+}
+
 onMounted(() => {
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && showMenu.value) {
-            closeNavbar()
-        }
-    })
+    document.addEventListener('click', handleOutsideClick)
+    document.addEventListener('keydown', handleEscKey)
+})
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleOutsideClick)
+    document.removeEventListener('keydown', handleEscKey)
 })
 </script>
 
 <style scoped>
-nav {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-}
-
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.3s;
