@@ -6,6 +6,9 @@ export default defineNuxtConfig({
     //     compatibilityVersion: 4,
     // },
     devtools: { enabled: true },
+    app: {
+        pageTransition: { name: 'fade', mode: 'out-in' },
+    },
 
     modules: [
         '@nuxt/fonts',
@@ -13,7 +16,16 @@ export default defineNuxtConfig({
         '@nuxt/image',
         '@nuxt/icon',
         '@nuxtjs/color-mode',
+        '@nuxtjs/seo',
     ],
+    // content: {
+    //     highlight: {
+    //         theme: {
+    //             default: 'min-light',
+    //             dark: 'min-dark',
+    //         },
+    //     },
+    // },
     colorMode: {
         classSuffix: '',
         preference: 'system',
@@ -24,5 +36,25 @@ export default defineNuxtConfig({
     css: ['~/assets/css/main.css'],
     vite: {
         plugins: [tailwindcss()],
+    },
+    site: {
+        url: 'https://nuxtseo.com',
+        name: 'My Blog',
+    },
+
+    schemaOrg: {
+        identity: 'Person',
+    },
+
+    seo: {
+        meta: {
+            description:
+                'This is a demo of Nuxt SEO showcasing all of the modules.',
+        },
+    },
+    nitro: {
+        prerender: {
+            routes: ['/sitemap.xml'],
+        },
     },
 })

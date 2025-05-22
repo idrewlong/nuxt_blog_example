@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
 
 :root {
     --bg-light: #ffffff;
@@ -29,4 +30,95 @@ body {
 
 .dark .dark\:bg-slate-900\/80 {
     background-color: rgba(15, 23, 42, 0.8);
+}
+
+.prose pre {
+    background-color: #f3f4f6 !important; /* light gray for light mode */
+    color: #334155 !important; /* slate-700 for light mode */
+    border-radius: 0.5rem;
+    padding: 1em;
+    overflow-x: auto;
+}
+
+.dark .prose pre {
+    background-color: #1e293b !important; /* slate-800 for dark mode */
+    color: #f1f5f9 !important; /* slate-100 for dark mode */
+}
+
+.prose code {
+    color: #334155 !important; /* slate-700 for light mode */
+    background: none;
+}
+
+.dark .prose code {
+    color: #f1f5f9 !important; /* slate-100 for dark mode */
+    background: none;
+}
+
+/* Optional: Make sure inline code and code blocks are consistent */
+.prose pre code {
+    color: inherit !important;
+    background: none;
+}
+
+.prose p,
+.prose ul > li,
+.prose ol > li {
+    color: #0f172a !important; /* slate-900 for light mode */
+}
+
+.dark .prose p,
+.dark .prose ul > li,
+.dark .prose ol > li {
+    color: #f1f5f9 !important; /* slate-100 for dark mode */
+}
+
+.prose thead th,
+.prose tbody td {
+    color: #0f172a !important; /* slate-900 for light mode */
+}
+
+.dark .prose thead th,
+.dark .prose tbody td {
+    color: #f1f5f9 !important; /* slate-100 for dark mode */
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+    color: #0f172a !important; /* slate-900 for light mode */
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+    color: #f1f5f9 !important; /* slate-100 for dark mode */
+}
+
+.prose strong,
+.prose b {
+    color: #0f172a !important; /* slate-900 for light mode */
+}
+
+.dark .prose strong,
+.dark .prose b {
+    color: #f1f5f9 !important; /* slate-100 for dark mode */
+}
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+    opacity: 1;
 }

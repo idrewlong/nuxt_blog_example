@@ -1,7 +1,10 @@
 <template>
-    <header class="fixed top-0 left-0 right-0 z-50">
+    <header
+        class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out"
+        :class="isHeaderVisible ? 'translate-y-0' : '-translate-y-full'"
+    >
         <nav
-            class="mx-auto p-4 bg-slate-900/80 backdrop-blur-lg"
+            class="mx-auto p-4 bg-slate-900/80 backdrop-blur-lg border-b border-slate-800/50"
             aria-label="Main navigation"
         >
             <!-- Content wrapper -->
@@ -252,18 +255,32 @@ const handleEscKey = (event) => {
     }
 }
 
+// Hide-on-scroll logic
+const isHeaderVisible = ref(true)
+
+const handleScroll = () => {
+    isHeaderVisible.value = window.scrollY === 0
+}
+
 onMounted(() => {
     document.addEventListener('click', handleOutsideClick)
     document.addEventListener('keydown', handleEscKey)
+    window.addEventListener('scroll', handleScroll)
 })
 
 onUnmounted(() => {
     document.removeEventListener('click', handleOutsideClick)
     document.removeEventListener('keydown', handleEscKey)
+    window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
 <style scoped>
+/* Add padding to the body to prevent content from being hidden under the fixed header */
+:global(body) {
+    padding-top: 4rem; /* Adjust this value based on your header height */
+}
+
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.3s;

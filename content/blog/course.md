@@ -1,6 +1,6 @@
 ---
-title: First Post
-description: First post description
+title: Course
+description: Course description
 date: 2025-05-21
 ---
 
@@ -42,4 +42,4 @@ Tables:
 </html>
 ```
 
-[Go to the second article](/blog/second)
+[Go to the first article](/blog/first)
